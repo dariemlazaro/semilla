@@ -1,0 +1,39 @@
+<?php
+
+/**
+ * @file
+ * Hook implementations for the Simplenews Test module.
+ */
+
+use Drupal\simplenews\AbortSendingException;
+use Drupal\simplenews\SkipMailException;
+
+/**
+ * Implements hook_mail_alter().
+ */
+function simplenews_test_mail_alter(&$message) {
+  if ($message['id'] == 'simplenews_node') {
+    /** @var \Drupal\simplenews\Mail\MailInterface $mail */
+    $mail = $message['params']['simplenews_mail'];
+    $issue = $mail->getIssue();
+    if (!empty($issue->body->value)) {
+      if ($issue->body->value == 'Nothing interesting') {
+        throw new SkipMailException('There was nothing interesting to send.');
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_simplenews_mail_result_alter().
+ */
+function simplenews_test_simplenews_mail_result_alter(&$result, array $message) {
+  if ($results_alter = \Drupal::state()->get('simplenews.test_result_alter')) {
+    $result = array_shift($results_alter);
+    \Drupal::state()->set('simplenews.test_result_alter', $results_alter);
+
+    if ($result == -1) {
+      throw new AbortSendingException('Testing abort sending');
+    }
+  }
+}

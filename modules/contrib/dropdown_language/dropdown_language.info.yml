@@ -1,0 +1,14 @@
+name: 'Dropdown Language Switcher'
+description: 'Provides a block with a Dropdown Language Switcher'
+package: Other
+dependencies:
+  - drupal:language
+  - drupal:block
+core_version_requirement: ^9
+type: module
+configure: dropdown_language.setting
+
+# Information added by Drupal.org packaging script on 2021-02-07
+version: '3.0.0'
+project: 'dropdown_language'
+datestamp: 1612727739

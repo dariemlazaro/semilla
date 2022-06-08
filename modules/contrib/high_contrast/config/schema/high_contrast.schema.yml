@@ -1,0 +1,19 @@
+high_contrast.settings:
+  type: config_object
+  label: 'High contrast'
+  mapping:
+    colors_background:
+      type: string
+      label: 'Background color'
+    colors_text:
+      type: string
+      label: 'Text color'
+    colors_hyperlinks:
+      type: string
+      label: 'Hyperlinks color'
+    default_logo:
+      type: boolean
+      label: 'Use the default logo (file named logo-hg in your theme folder if it exists)'
+    logo_path:
+      type: string
+      label: 'Logo path'

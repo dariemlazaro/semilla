@@ -1,0 +1,30 @@
+<?php
+
+/**
+ * @file
+ * Module file for yearonly.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function yearonly_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // For help overview pages we use the route help.page.$moduleName.
+    case 'help.page.yearonly':
+      $output = '';
+      $output = '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('This module provides a custom field type to collect year part of date based on selected settings (range of year).') . '</p>';
+      $output .= '<h3>' . t('Installation:') . '</h3>';
+      $output .= '<p>' . t('Installation of Year Only module is similar to other drupal modules.
+        To install Year Only module please follow the below steps:') . '</p>';
+      $output .= '<ol>';
+      $output .= '<li>' . t('Download the Year Only module and extract into the /modules directory.') . '</li>';
+      $output .= '<li>' . t('Enable the module.') . '</li>';
+      $output .= '<li>' . t('Go to manage fields in any entity and add new field of type Year Only.') . '</li>';
+      $output .= '</ol>';
+      return $output;
+  }
+}

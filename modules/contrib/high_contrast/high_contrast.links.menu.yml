@@ -1,0 +1,5 @@
+high_contrast.config_form:
+  title: 'High contrast'
+  description: 'Settings related to High Contrast.'
+  route_name: high_contrast.config_form
+  parent: system.admin_config_ui

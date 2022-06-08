@@ -1,0 +1,45 @@
+# Schema for the configuration files of the securelogin module.
+
+securelogin.settings:
+  type: config_object
+  label: 'Secure login settings'
+  mapping:
+    base_url:
+      type: string
+      label: 'Secure base URL'
+    secure_forms:
+      type: boolean
+      label: 'Redirect form pages to secure URL'
+    all_forms:
+      type: boolean
+      label: 'Submit all forms to secure URL'
+    other_forms:
+      type: string
+      label: 'Other forms to secure'
+    form_user_login_form:
+      type: boolean
+      label: 'User login form'
+    form_user_form:
+      type: boolean
+      label: 'User edit form'
+    form_user_register_form:
+      type: boolean
+      label: 'User registration form'
+    form_user_pass_reset:
+      type: boolean
+      label: 'User password reset form'
+    form_user_pass:
+      type: boolean
+      label: 'User password request form'
+    form_comment_form:
+      type: boolean
+      label: 'Comment form'
+    form_node_form:
+      type: boolean
+      label: 'Node form'
+    form_contact_message_form:
+      type: boolean
+      label: 'Contact form'
+    form_webform_client_form:
+      type: boolean
+      label: 'Webform'

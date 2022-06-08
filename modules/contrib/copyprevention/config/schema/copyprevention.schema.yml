@@ -1,0 +1,8 @@
+copyprevention.settings:
+  type: mapping
+  label: Settings
+  mapping:
+    copyprevention_images_min_dimension:
+      type: integer
+    copyprevention_images_min_dimention:
+      type: integer

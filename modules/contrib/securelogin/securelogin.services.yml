@@ -1,0 +1,24 @@
+services:
+  securelogin.manager:
+    class: Drupal\securelogin\SecureLoginManager
+    arguments: ['@config.factory', '@event_dispatcher', '@request_stack', '@form_builder']
+  securelogin.path_processor:
+    class: Drupal\securelogin\SecureLoginPathProcessor
+    arguments: ['@config.factory']
+    tags:
+      - { name: path_processor_outbound }
+  cache_context.securelogin:
+    class: Drupal\securelogin\SecureLoginCacheContext
+    arguments: ['@request_stack']
+    tags:
+      - { name: cache.context}
+  securelogin.response_subscriber:
+    class: Drupal\securelogin\SecureLoginResponseSubscriber
+    arguments: ['@config.factory', '@path.current', '@current_route_match', '@current_user', '@redirect.destination']
+    tags:
+      - { name: event_subscriber }
+  securelogin.request_subscriber:
+    class: Drupal\securelogin\SecureLoginRequestSubscriber
+    arguments: ['@config.factory', '@current_route_match']
+    tags:
+      - { name: event_subscriber }

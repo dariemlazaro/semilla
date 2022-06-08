@@ -1,0 +1,13 @@
+{
+    "name": "drupal/pdf_api",
+    "type": "drupal-module",
+    "description": "Provides an API for generating PDFs.",
+    "homepage": "https://www.drupal.org/project/pdf_api",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "dompdf/dompdf" : "^0.8 || ^1.0",
+        "mikehaertl/phpwkhtmltopdf": "^2.3",
+        "mpdf/mpdf" : "^8.0.6",
+        "tecnickcom/tcpdf": "^6.2"
+    }
+}

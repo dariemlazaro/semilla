@@ -1,0 +1,11 @@
+name: 'Copy Prevention'
+description: 'Makes copying from your site harder.'
+package: 'User interface'
+configure: copyprevention.settings_form
+core_version_requirement: '^8 || ^9'
+type: module
+
+# Information added by Drupal.org packaging script on 2021-03-05
+version: '8.x-1.3'
+project: 'copyprevention'
+datestamp: 1614964908

@@ -1,0 +1,9 @@
+file_upload_secure_validator.file-upload-secure-validator-settings:
+  path: '/admin/config/media/file_upload_secure_validator'
+  defaults:
+    _form: '\Drupal\file_upload_secure_validator\Form\SettingsForm'
+    _title: 'SettingsForm'
+  requirements:
+    _permission: 'access administration pages'
+  options:
+    _admin_route: TRUE

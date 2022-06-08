@@ -1,0 +1,73 @@
+<?php
+/**
+ * @file
+ * Module file for DB Maintenance.
+ */
+
+use Drupal\db_maintenance\Module\Hook\CommonHookHandler;
+
+/**
+ * DB Maintenance.
+ */
+
+/**
+ * Implements hook_cron().
+ */
+function db_maintenance_cron() {
+  CommonHookHandler::hookCron();
+}
+
+/**
+ * Implements hook_help().
+ *
+ * @param $section string
+ * @return string
+ */
+function db_maintenance_help($path, $arg) {
+  switch ($path) {
+    //case 'admin/help/db_maintenance':
+    case 'help.page.db_maintenance':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('DB Maintenance performs an optimization query on selected tables') . '</p>';
+      $output .= '<h3>' . t('Uses') . '</h3>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('MyISAM Tables') . '</dt>';
+      $output .= '<dd>' . t('OPTIMIZE TABLE repairs a table if it has deleted or split rows, sorts table indexes, and updates table statistics. For BDB and InnoDB, OPTIMIZE rebuilds the table.') . '</dd>';
+      $output .= '<dd>' . t('OPTIMIZE works best on tables with large deletions (e.g. cache or watchdog), however, MySQL will reuse old record positions, therefore in most setups, OPTIMIZE TABLE is unnecessary unless you just like defragmenting.') . '</dd>';
+      $output .= '<dd>' . t('The Overhead column in phpMyAdmin\'s database view is the most common way to determine the need of an OPTIMIZE TABLE query. It essentially shows the amount of disk space you would recover by running an optimize/defragmentation query.') . '</dd>';
+      $output .= '<dd><i><u>' . t('Note: MySQL locks tables while OPTIMIZE TABLE is running.') . '</u></i></dd>';
+      $output .= '<dt>' . t('Postgre SQL Tables') . '</dt>';
+      $output .= '<dd>' . t('VACUUM reclaims storage occupied by deleted tuples. In normal PostgreSQL operation, tuples that are deleted or obsoleted by an update are not physically removed from their table; they remain present until a VACUUM is done. It\'s therefore necessary to VACUUM periodically, especially on frequently-updated tables.') . '</dd>';
+      $output .= '</dl>';
+      return $output;
+    //case 'admin/config/system/db_maintenance':
+    case 'db_maintenance.admin_settings':
+      return t('<p>DB maintenance performs an optimization query on selected tables.</p>
+        <p>For MyISAM tables,
+        OPTIMIZE TABLE repairs a table if it has deleted or split rows, sorts table indexes,
+        and updates table statistics. For BDB and InnoDB, OPTIMIZE rebuilds the table. OPTIMIZE
+        works best on tables with large deletions (e.g. cache or watchdog), however MySQL will reuse
+        old record positions, therefore in most setups, OPTIMIZE TABLE is unnecessary unless you
+        just like defragmenting.</p><p>Note: MySQL locks tables during the time OPTIMIZE TABLE is running.</p>
+        <p>The Overhead column in phpMyAdmin\'s database view is the most common way to determine the
+        need of an OPTIMIZE TABLE query. It essentially shows the amount of disk space you would
+        recover by running an optimize/defragmentation query.</p>
+        <p>For PostgreSQL tables, VACUUM reclaims storage occupied by deleted tuples.
+        In normal PostgreSQL operation, tuples that are deleted or obsoleted by an update are not
+        physically removed from their table; they remain present until a VACUUM is done. Therefore
+        it\'s necessary to VACUUM periodically, especially on frequently-updated tables.</p>');
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function db_maintenance_permission() {
+  return array(
+    'administer db maintenance' => array(
+      'title' => t('Administer DB Maintenance'),
+      'description' => t('Select which tables to optimize during cron jobs.'),
+    )
+  );
+}

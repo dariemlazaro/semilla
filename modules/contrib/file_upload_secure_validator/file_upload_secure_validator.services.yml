@@ -1,0 +1,7 @@
+services:
+  logger.channel.file_upload_secure_validator:
+    parent: logger.channel_base
+    arguments: ['file_upload_secure_validator']
+  file_upload_secure_validator:
+    class: Drupal\file_upload_secure_validator\Service\FileUploadSecureValidator
+    arguments: ['@logger.factory', '@string_translation', '@config.factory']

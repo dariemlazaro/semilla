@@ -1,0 +1,28 @@
+{
+    "name": "drupal/copyprevention",
+    "description": "Makes copying from your site harder.",
+    "type": "drupal-module",
+    "homepage": "https://www.drupal.org/project/copyprevention",
+    "authors":  [
+        {
+            "name": "Andrew Berezovsky",
+            "homepage": "https://www.drupal.org/u/duozersk",
+            "role": "Maintainer"
+        },
+        {
+            "name": "Neslee Canil Pinto",
+            "homepage": "https://www.drupal.org/u/neslee-canil-pinto",
+            "role": "Maintainer"
+        },
+        {
+            "name": "Neha (nehajyoti)",
+            "homepage": "https://www.drupal.org/u/nehajyoti",
+            "role": "Maintainer"
+        }
+    ],
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/copyprevention",
+        "source": "https://www.drupal.org/project/copyprevention"
+    },
+    "license": "GPL-2.0-or-later"
+}

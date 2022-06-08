@@ -1,0 +1,147 @@
+<?php
+
+/**
+ * @file
+ * Contains owlcarousel.module..
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function owlcarousel_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the owl module.
+    case 'help.page.owlcarousel':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('OWL Carousel: Download code at: https://github.com/tabvn/owl') . '</p>';
+      $output .= '<p>' . t('Video tutorial how to install: https://www.youtube.com/watch?v=PzBMJqkNHQ0') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function owlcarousel_theme() {
+  return [
+    'owlcarousel' => [
+      'variables' => ['items' => NULL, 'settings' => NULL],
+    ],
+    'owlcarousel_views' => [
+      'variables' => [],
+    ],
+  ];
+}
+
+/**
+ * Themeable for owlcarousel.
+ */
+function template_preprocess_owlcarousel(&$variables) {
+  $items = $variables['items'];
+
+  $settings = _owlcarousel_format_settings($variables['settings']);
+
+  $variables['attributes']['class'][] = 'owl-slider-wrapper';
+  $variables['attributes']['class'][] = 'owl-carousel';
+  $variables['attributes']['class'][] = 'owl-theme';
+  $variables['attributes']['data-settings'] = json_encode($settings);
+
+  $html = '';
+  if (!empty($items)) {
+    $i = 0;
+    foreach ($items as $item) {
+      $html .= '<div class="owl-item-inner owl-item-inner' . $i . '">' . render($item) . '</div>';
+      $i++;
+    }
+  }
+  $output = [
+    '#type' => 'markup',
+    '#markup' => $html,
+  ];
+  $variables['output'] = render($output);
+
+}
+
+/**
+ * Prepares variables for Views OwlCarousel carousel templates.
+ *
+ * Default template: owlcarousel-views.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *     - view: A View object.
+ */
+function template_preprocess_owlcarousel_views(array &$variables) {
+  $handler = $variables['view']->style_plugin;
+
+  $settings = _owlcarousel_format_settings($handler->options);
+  // Used JSON_FORCE_OBJECT to force the numbers
+  // in the $settings array keys.
+  $variables['attributes']['data-settings'] = json_encode($settings, JSON_FORCE_OBJECT);
+  $variables['attributes']['class'][] = 'owl-slider-wrapper';
+  $variables['attributes']['class'][] = 'owl-carousel';
+  $variables['attributes']['class'][] = 'owl-theme';
+
+  $attached = [
+    '#attached' => ['library' => ['owlcarousel/owlcarousel']],
+  ];
+  render($attached);
+  template_preprocess_views_view_unformatted($variables);
+}
+
+/**
+ * Default settings for owl.
+ */
+function _owlcarousel_default_settings($key = NULL) {
+  $settings = [
+    'image_style' => '',
+    'image_link' => '',
+    'items' => 1,
+    'margin' => '0',
+    'nav' => FALSE,
+    'autoplay' => FALSE,
+    'autoplayHoverPause' => FALSE,
+    'dots' => TRUE,
+  ];
+
+  return isset($settings[$key]) ? $settings[$key] : $settings;
+}
+
+/**
+ * Return formatted js array of settings.
+ */
+function _owlcarousel_format_settings($settings) {
+  $settings['items'] = (int) $settings['items'];
+
+  $settings['margin'] = (int) $settings['margin'];
+  $settings['nav'] = (bool) $settings['nav'];
+  $settings['autoplay'] = (bool) $settings['autoplay'];
+  $settings['autoplayHoverPause'] = (bool) $settings['autoplayHoverPause'];
+  $settings['dots'] = (bool) $settings['dots'];
+
+  if ($settings['itemsMobile']) {
+    $dimensioneMobile = (int) $settings['dimensionMobile'];
+    $itemsMobile['items'] = (int) $settings['itemsMobile'];
+    $settings['responsive'][$dimensioneMobile] = $itemsMobile;
+  }
+
+  if ($settings['itemsDesktop']) {
+    $dimensioneDesktop = (int) $settings['dimensionDesktop'];
+    $itemsDesktop['items'] = (int) $settings['itemsDesktop'];
+    $settings['responsive'][$dimensioneDesktop] = $itemsDesktop;
+  }
+
+  if (isset($settings['image_style'])) {
+    unset($settings['image_style']);
+  }
+  if (isset($settings['image_link'])) {
+    unset($settings['image_link']);
+  }
+
+  return $settings;
+}

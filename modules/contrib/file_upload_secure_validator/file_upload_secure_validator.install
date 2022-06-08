@@ -1,0 +1,86 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for file_upload_secure_validator.
+ */
+
+use Symfony\Component\HttpFoundation\File\MimeType\FileinfoMimeTypeGuesser as SymfonyFileinfoMimeTypeGuesser;
+
+/**
+ * Implements hook_requirements().
+ */
+function file_upload_secure_validator_requirements($phase) {
+  $requirements = [];
+  // Default values, we will change this if we detect a problem.
+  $requirements['fileinfo_ext']['title'] = t('Fileinfo extension');
+  $requirements['fileinfo_ext']['severity'] = REQUIREMENT_OK;
+  $requirements['fileinfo_ext']['value'] = t('Found');
+
+  if ($phase == 'install' || $phase == 'runtime') {
+    if (!SymfonyFileinfoMimeTypeGuesser::isSupported()) {
+      $requirements['fileinfo_ext']['value'] = t('Fileinfo extension not available');
+      $requirements['fileinfo_ext']['severity'] = REQUIREMENT_ERROR;
+      $requirements['fileinfo_ext']['description'] = t('File upload secure validator module uses Fileinfo extension. It seems as if Fileinfo extension is not loaded/enabled. If you are using Windows, may be, you should uncomment php_fileinfo.dll in php.ini file.');
+    }
+  }
+
+  return $requirements;
+}
+
+/**
+ * Add default MIME types equivalence groups.
+ */
+function file_upload_secure_validator_update_8001() {
+  $config_factory = \Drupal::configFactory();
+  $config = $config_factory->getEditable('file_upload_secure_validator.settings');
+  $config->set('mime_types_equivalence_groups', [
+    [
+      'text/csv',
+      'text/plain',
+      'application/csv',
+      'text/comma-separated-values',
+      'application/excel',
+      'application/vnd.ms-excel',
+      'application/vnd.msexcel',
+      'text/anytext',
+      'application/octet-stream',
+      'application/txt',
+    ],
+    [
+      'text/xml',
+      'text/plain',
+      'application/xml',
+    ],
+    [
+      'image/svg+xml',
+      'image/svg',
+    ],
+    [
+      'text/x-po',
+      'application/octet-stream',
+    ],
+    [
+      'text/plain',
+      'application/pkix-cert',
+      'application/pkix-crl',
+      'application/x-x509-ca-cert',
+      'application/x-x509-user-cert',
+      'application/x-pem-file',
+      'application/pgp-keys',
+      'application/x-pkcs7-certificates',
+      'application/x-pkcs7-certreqresp',
+      'application/x-pkcs7-crl',
+      'application/pkcs7-mime',
+      'application/pkcs8',
+      'application/pkcs10',
+      'application/x-pkcs12',
+    ],
+    [
+      'application/octet-stream',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ],
+  ]);
+  $config->save(TRUE);
+}

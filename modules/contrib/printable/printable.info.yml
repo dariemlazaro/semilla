@@ -1,0 +1,14 @@
+name: Printable
+type: module
+description: 'Generates a printer-friendly version of Drupal content entities.'
+package: printable
+core: 8.x
+core_version_requirement: ^8 || ^9
+configure: printable.configure
+dependencies:
+  - drupal:path_alias
+
+# Information added by Drupal.org packaging script on 2022-03-09
+version: '2.1.0'
+project: 'printable'
+datestamp: 1646790851

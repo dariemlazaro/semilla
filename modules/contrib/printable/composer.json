@@ -1,0 +1,24 @@
+{
+    "name": "drupal/printable",
+    "type": "drupal-module",
+    "description": "Generates printer friendly version of nodes",
+    "homepage": "https://www.drupal.org/project/printable",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Nigel Cunningham",
+            "email": "nigel@nigelcunningham.com.au"
+        }
+    ],
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/printable",
+        "source": "https://git.drupalcode.org/project/printable"
+    },
+    "require": {
+        "wa72/htmlpagedom": "^1.3",
+        "drupal/pdf_api": "^2.0"
+    },
+    "require-dev": {
+        "smalot/pdfparser": "^1"
+    }
+}

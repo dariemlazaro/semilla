@@ -1,0 +1,12 @@
+file_upload_secure_validator.settings:
+  type: config_entity
+  mapping:
+    mime_types_equivalence_groups:
+      type: sequence
+      label: 'MIME types equivalence groups'
+      sequence:
+        type: sequence
+        label: 'MIME types equivalence group'
+        sequence:
+          type: string
+          label: 'MIME type'

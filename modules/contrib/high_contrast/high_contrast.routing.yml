@@ -1,0 +1,21 @@
+high_contrast.config_form:
+  path: '/admin/config/user-interface/high-contrast'
+  defaults:
+    _form: 'Drupal\high_contrast\Form\HighContrastConfigurationForm'
+    _title: 'High contrast'
+  requirements:
+    _permission: 'administer site configuration'
+
+high_contrast.enable:
+  path: '/high-contrast/enable'
+  defaults:
+    _controller: 'Drupal\high_contrast\HighContrastController::enable'
+  requirements:
+    _access: 'TRUE'
+
+high_contrast.disable:
+  path: '/high-contrast/disable'
+  defaults:
+    _controller: 'Drupal\high_contrast\HighContrastController::disable'
+  requirements:
+    _access: 'TRUE'

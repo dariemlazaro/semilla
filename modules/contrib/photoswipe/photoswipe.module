@@ -1,0 +1,85 @@
+<?php
+
+/**
+ * @file
+ * Photswipe integration with Drupal module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_libraries_info().
+ */
+function photoswipe_libraries_info() {
+  $libraries['photoswipe'] = [
+    'name' => 'Photoswipe',
+    'vendor url' => 'https://github.com/dimsemenov/PhotoSwipe',
+    'download url' => 'https://github.com/dimsemenov/PhotoSwipe/archive/master.zip',
+    'version arguments' => [
+      'file' => 'dist/photoswipe.min.js',
+  // PhotoSwipe - v4.1.1 - 2015-12-24.
+      'pattern' => '/v([\d.]+)/',
+      'lines' => 1,
+      'cols' => 30,
+    ],
+  ];
+  return $libraries;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function photoswipe_theme() {
+  return [
+    'photoswipe_image_formatter' => [
+      'variables' => [
+        'item' => NULL,
+        'entity' => NULL,
+        'display_settings' => [],
+        'delta' => NULL,
+      ],
+      'file' => 'photoswipe.theme.inc',
+    ],
+    'photoswipe_responsive_image_formatter' => [
+      'variables' => [
+        'item' => NULL,
+        'entity' => NULL,
+        'display_settings' => [],
+        'delta' => NULL,
+      ],
+      'template' => 'photoswipe-image-formatter',
+      'file' => 'photoswipe.theme.inc',
+    ],
+    'photoswipe_container' => [
+      'variables' => [],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_help().
+ */
+function photoswipe_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the photoswipe module.
+    case 'help.page.photoswipe':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('<a href=":url">Photoswipe</a> provides a nice javascript-based display for photo galleries, very sleek on mobile browsers.', [
+        ':url' => 'http://www.photoswipe.com/',
+      ]) . '</p>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function photoswipe_page_attachments(array &$attachments) {
+  // Conditionally load on non-admin pages.
+  $is_admin = \Drupal::service('router.admin_context')->isAdminRoute();
+
+  if (\Drupal::config('photoswipe.settings')->get('photoswipe_always_load_non_admin') && !$is_admin) {
+    \Drupal::service('photoswipe.assets_manager')->attach($attachments);
+  }
+}

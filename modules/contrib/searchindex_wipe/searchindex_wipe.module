@@ -1,0 +1,71 @@
+<?php
+
+/**
+ * @file
+ * Enables wipe of search index.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function searchindex_wipe_form_search_admin_settings_alter(&$form, FormStateInterface $form_state) {
+  if (\Drupal::currentUser()->hasPermission('wipe search index')) {
+    $form['status']['clear_index'] = array(
+      '#value' => t('Wipe Index'),
+      '#type' => 'submit',
+      '#submit' => array('searchindex_wipe_all'),
+      '#description' => t('Drops all the index build by search module'),
+    );
+  }
+}
+
+/**
+ * Redirect to confirmation link.
+ */
+function searchindex_wipe_all(&$form, FormStateInterface $form_state) {
+  $url = new Url('searchindex_wipe.reindex_confirm');
+  $form_state->setRedirectUrl($url);
+}
+
+/**
+ * Helper function to truncate search related tables.
+ */
+function searchindex_wipe_truncate_table() {
+  // Taken code from drupal_uninstall_schema.
+  $schema = drupal_get_module_schema('search');
+  foreach ($schema as $table_name => $table) {
+    // Truncate search related tables.
+    \Drupal::database()->truncate($table_name)->execute();
+  }
+  \Drupal::messenger()->addMessage(t('Search Index Cleared, Please rebuilt the index by running cron.'));
+}
+
+/**
+ * Implements hook_help().
+ */
+function searchindex_wipe_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+
+    case 'help.page.searchindex_wipe':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('AThis module clean up search index built by search module.') . '</p>';
+      $output .= '<p>' . t('It is helpful while deploying large sites whose search index becomes massive.') . '</p>';
+      $output .= '<p>' . t('TThe reindex button does not clear the search index but rather gradually replaces existing search data with new data as items are reindexed.') . '</p>';
+
+            // Add a link to the Drupal.org project.
+      $output .= '<p>';
+      $output .= t('Visit the <a href=":project_link">Search Index Wipe project page</a> on Drupal.org for more information.',[
+        ':project_link' => 'https://www.drupal.org/project/searchindex_wipe'
+        ]);
+      $output .= '</p>';
+
+      return $output;
+
+    default:
+  }
+}

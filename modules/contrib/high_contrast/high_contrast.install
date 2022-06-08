@@ -1,0 +1,54 @@
+<?php
+
+use \Drupal\file\Entity\File;
+
+/**
+ * @file
+ * Contains install and update functions for High Contrast.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function high_contrast_uninstall() {
+  $path = HIGH_CONTRAST_CSS_LOCATION;
+
+  if (file_exists($path)) {
+    \Drupal::service('file_system')->delete($path);
+  }
+}
+
+/**
+ * Regenerate the CSS file in its new location.
+ */
+function high_contrast_update_8001() {
+  // Updating the CSS file is triggered by a configuration save.
+  \Drupal::configFactory()->getEditable('high_contrast.settings')->save();
+}
+
+/**
+ * Delete the old CSS file.
+ */
+function high_contrast_update_8002() {
+  $path = 'public://high_contrast.css';
+
+  if (file_exists($path)) {
+    \Drupal::service('file_system')->delete($path);
+  }
+}
+
+/**
+ * Remove database entry for the high_contrast.css file.
+ */
+function high_contrast_update_8003() {
+  $database = \Drupal::database();
+  $query = $database->query('SELECT fid FROM {file_managed} where uri=:uri', [':uri' => HIGH_CONTRAST_CSS_LOCATION]);
+  $result = $query->fetchAll();
+  foreach ($result as $record) {
+    $file = File::load($record->fid);
+    $file->delete();
+  }
+
+  // Re-add the CSS file by saving configuration.
+  \Drupal::configFactory()->getEditable('high_contrast.settings')->save();
+}

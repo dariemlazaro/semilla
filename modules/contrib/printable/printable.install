@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @file
+ * Install functions for the printable module.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function printable_requirements() {
+  $requirements = [];
+  if (!class_exists('\Wa72\HtmlPageDom\HtmlPageCrawler')) {
+    $requirements['printable_library'] = [
+      'title' => t('Printable'),
+      'value' => t('Not available'),
+      'description' => t('The Printable module depends on the <b>@library</b> library. Please install the library (eg using composer) and then enable this module.',
+        [
+          '@library' => "wa72/htmlpagedom",
+        ]
+      ),
+      'severity' => REQUIREMENT_ERROR,
+    ];
+  }
+  return $requirements;
+}

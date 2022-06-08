@@ -1,0 +1,10 @@
+block.settings.countdown_config:
+  type: block_settings
+  label: 'Countdown settings'
+  mapping:
+    countdown_datetime:
+      type: text
+      label: 'Timer date'
+    font_size:
+      type: text
+      label: 'Font size'

@@ -1,0 +1,18 @@
+db_maintenance.settings:
+  type: mapping
+  label: Settings
+  mapping:
+    cron_last_run:
+      type: integer
+    cron_frequency:
+      type: integer
+    use_time_interval:
+      type: boolean
+    time_interval_start:
+      type: string
+    time_interval_end:
+      type: string
+    all_tables:
+      type: integer
+    write_log:
+      type: integer

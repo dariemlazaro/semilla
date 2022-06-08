@@ -1,0 +1,5 @@
+securelogin.admin:
+  title: 'Secure login'
+  parent: user.admin_index
+  description: 'Configure secure login settings.'
+  route_name: securelogin.admin

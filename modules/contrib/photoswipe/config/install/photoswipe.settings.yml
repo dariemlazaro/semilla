@@ -1,0 +1,28 @@
+photoswipe_always_load_non_admin: false
+# @see http://photoswipe.com/documentation/options.html
+options:
+#  index: 0
+  showAnimationDuration:  333
+  hideAnimationDuration:  333
+  showHideOpacity:  FALSE
+  bgOpacity:  1
+  spacing:  0.12
+  allowPanToNext:  TRUE
+  maxSpreadZoom:  2
+  loop:  TRUE
+  pinchToClose:  TRUE
+  closeOnScroll:  TRUE
+  closeOnVerticalDrag:  TRUE
+  mouseUsed:  FALSE
+  escKey:  TRUE
+  arrowKeys:  TRUE
+  history:  TRUE
+#  galleryUID: 1
+#  galleryPIDs: FALSE
+  errorMsg: '<div class="pswp__error-msg"><a href="%url%" target="_blank">The image</a> could not be loaded.</div>'
+  preload:
+    - 1
+    - 1
+  mainClass:  NULL
+  focus:  TRUE
+  modal: TRUE

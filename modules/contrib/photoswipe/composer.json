@@ -1,0 +1,42 @@
+{
+  "name": "drupal/photoswipe",
+  "type": "drupal-module",
+  "description": "Javascript-based photo gallery display for your Drupal website (very sleek with mobile browsers).",
+  "keywords": [
+    "Drupal",
+    "Photoswipe",
+    "Gallery",
+    "Lightbox",
+    "Mobile"
+  ],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/photoswipe",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/photoswipe",
+    "source": "http://cgit.drupalcode.org/photoswipe"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    },
+    {
+      "type": "package",
+      "package": {
+        "name": "bower-asset/photoswipe",
+        "version": "4.1.1",
+        "type": "drupal-library",
+        "dist": {
+          "url": "https://github.com/dimsemenov/PhotoSwipe/archive/v4.1.1.zip",
+          "type": "zip"
+        }
+      }
+    }
+  ],
+  "require": {},
+  "suggest": {
+    "bower-asset/photoswipe": "Required to user drupal/photoswipe."
+  }
+}

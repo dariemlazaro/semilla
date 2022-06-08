@@ -1,0 +1,6 @@
+services:
+  minifyhtml_exit:
+    class: Drupal\minifyhtml\EventSubscriber\MinifyHTMLExit
+    arguments: ['@config.factory', '@datetime.time', '@logger.factory']
+    tags:
+      - {name: event_subscriber}

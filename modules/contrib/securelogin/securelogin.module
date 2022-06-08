@@ -1,0 +1,89 @@
+<?php
+
+/**
+ * @file
+ * Secure login module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_alter().
+ */
+function securelogin_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Load secure login configuration.
+  $conf = \Drupal::config('securelogin.settings');
+  $other_forms = $conf->get('other_forms');
+  // Changing the form id to the base form allows us to match all node forms
+  // since the form id will be 'node_form'.
+  if (isset($form_state->getBuildInfo()['base_form_id'])) {
+    $form_id = $form_state->getBuildInfo()['base_form_id'];
+  }
+  if ($conf->get('all_forms')) {
+    $form['#https'] = TRUE;
+  }
+  elseif ($conf->get('form_' . $form_id)) {
+    $form['#https'] = TRUE;
+  }
+  elseif (!empty($other_forms) && in_array($form_id, explode(' ', $other_forms))) {
+    $form['#https'] = TRUE;
+  }
+  elseif ($conf->get('form_webform_client_form') && isset($form['#webform_id']) && $form_id === "webform_submission_{$form['#webform_id']}_form") {
+    $form['#https'] = TRUE;
+  }
+  if (!empty($form['#https'])) {
+    \Drupal::service('securelogin.manager')->secureForm($form);
+  }
+}
+
+/**
+ * Implements hook_block_view_BASE_BLOCK_ID_alter().
+ */
+function securelogin_block_view_user_login_block_alter(array &$build, BlockPluginInterface $block) {
+  // User module alters the form action after the user login block is built, so
+  // now we may need to re-secure it.
+  $build['#pre_render'][] = 'securelogin.manager:userLoginBlockPreRender';
+}
+
+/**
+ * Implements hook_help().
+ */
+function securelogin_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.securelogin':
+      return t('The Secure Login module allows user login and other forms to be submitted to a configurable secure (HTTPS) URL from the insecure (HTTP) site. By securing the user login forms, a site can enforce secure authenticated sessions, which are immune to <a rel="noreferrer" href="https://en.wikipedia.org/wiki/Session_hijacking">session hijacking</a>.');
+
+    case 'securelogin.admin':
+      return t('You may configure the user login and other forms to be submitted to the secure (HTTPS) base URL. By securing all forms that create a session, a site can enforce secure sessions which are immune to <a rel="noreferrer" href="https://en.wikipedia.org/wiki/Session_hijacking">session hijacking</a> by eavesdroppers.');
+  }
+}
+
+/**
+ * Implements hook_securelogin_alter() for comment module.
+ */
+function comment_securelogin_alter(&$forms) {
+  $forms['comment_form']['#title'] = t('Comment form');
+}
+
+/**
+ * Implements hook_securelogin_alter() for node module.
+ */
+function node_securelogin_alter(&$forms) {
+  $forms['node_form']['#title'] = t('Node form');
+}
+
+/**
+ * Implements hook_securelogin_alter() for contact module.
+ */
+function contact_securelogin_alter(&$forms) {
+  $forms['contact_message_form']['#title'] = t('Contact form');
+}
+
+/**
+ * Implements hook_securelogin_alter() for webform module.
+ */
+function webform_securelogin_alter(&$forms) {
+  $forms['webform_client_form']['#title'] = t('Webform');
+}

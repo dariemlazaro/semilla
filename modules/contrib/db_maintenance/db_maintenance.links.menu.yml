@@ -1,0 +1,11 @@
+# Overview page returns a menu-block with links that where
+# rules.ui.overview is declared as parent.
+db_maintenance.overview:
+  title: 'DB Maintenance'
+  route_name: db_maintenance.overview
+  parent: system.admin_config_system
+  description: 'Executes a cron-based query to optimize database tables.'
+
+db_maintenance.page:
+  route_name: db_maintenance.optimize_tables_page
+#  title: 'DB Maintenance'

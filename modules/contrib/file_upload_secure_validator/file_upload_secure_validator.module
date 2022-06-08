@@ -1,0 +1,36 @@
+<?php
+
+/**
+ * @file
+ * Contains file_upload_secure_validator.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\file\Entity\File;
+
+/**
+ * Implements hook_help().
+ */
+function file_upload_secure_validator_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the file_upload_secure_validator module.
+    case 'help.page.file_upload_secure_validator':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Secure File Upload Mime Detect') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_file_validate().
+ */
+function file_upload_secure_validator_file_validate(File $file) {
+  $errors = [];
+  if (\Drupal::hasService('file_upload_secure_validator')) {
+    $errors = \Drupal::service('file_upload_secure_validator')->validate($file);
+  }
+  return $errors;
+}

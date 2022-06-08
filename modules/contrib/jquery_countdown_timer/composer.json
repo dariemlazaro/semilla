@@ -1,0 +1,22 @@
+{
+    "name": "drupal/jquery_countdown_timer",
+    "description": "This module provides a block with a jQuery countdown timer.",
+    "type": "drupal-module",
+    "keywords": ["Drupal"],
+    "homepage": "https://www.drupal.org/project/jquery_countdown_timer",
+    "authors": [
+        {
+            "name": "Neslee Canil Pinto",
+            "homepage": "https://www.drupal.org/u/neslee-canil-pinto",
+            "role": "Maintainer"
+        }
+    ],
+    "support": {
+        "issues": "https://www.drupal.org/project/issues/jquery_countdown_timer",
+        "source": "https://git.drupalcode.org/project/jquery_countdown_timer"
+    },
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "drupal/core": "^8 || ^9"
+    }
+}
