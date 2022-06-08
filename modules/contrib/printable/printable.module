@@ -1,0 +1,324 @@
+<?php
+
+/**
+ * @file
+ * Provides printer friendly content entities.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Template\Attribute;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+// Register autoloading of vendor libraries.
+$autoload = __DIR__ . '/vendor/autoload.php';
+if (file_exists($autoload)) {
+  require_once $autoload;
+}
+
+/**
+ * Implements hook_help().
+ */
+function printable_help($route_name, RouteMatchInterface $route_match) {
+  if ($route_name !== 'help.page.printable') {
+    return;
+  }
+
+  return t('
+    <h3>Introduction</h3>
+    <p>This module allows you to generate the following printer-friendly versions of any node:<br>
+      <ul>
+        <li>Web page printer-friendly version (at www.example.com/node/nid/printable/print)</li>
+        <li>PDF version (at www.example.com/node/nid/printable/pdf)</li>
+      </ul>
+      where nid is the node id of content to render.)
+    </p>
+    <h3>Installation</h3>
+    <p>This will simplify a lot once <a href="https://www.drupal.org/project/drupal/issues/2494073">https://www.drupal.org/project/drupal/issues/2494073</a>
+    is fixed:<br>
+      <ul>
+        <li>Download this module either using composer or by getting it directly from drupal.org: <br>
+          <code>composer require drupal/printable</code>
+        </li>
+        <li>Install this module\'s composer dependencies - they can be found in composer.json in the project directory. Run composer require for each dependency from the Drupal root:<br>
+          <code>
+            composer require \'wa72/htmlpagedom\': \'1.3.*\'<br>
+            composer require \'smalot/pdfparser\': \'*\'<br>
+          </code>
+        </li>
+        <li>Enable printable:<br>
+          <code>drush en -y printable</code>
+        </li>
+      </ul>
+    </p>'
+  );
+}
+
+/**
+ * Implements hook_permission().
+ */
+function printable_permission() {
+  return [
+    'view printer friendly versions' => [
+      'title' => t('View Printer Friendly Versions'),
+    ],
+    'administer printable' => [
+      'title' => t('Administer Printable'),
+    ],
+  ];
+}
+
+/**
+ * Implements hook_theme().
+ */
+function printable_theme() {
+  $module_path = drupal_get_path('module', 'printable');
+  return [
+    'printable_navigation' => [
+      'variables' => ['printable_link' => NULL],
+    ],
+    'printable' => [
+      'template' => 'printable',
+      'pattern' => 'printable__',
+      'variables' => [
+        'header' => NULL,
+        'content' => NULL,
+        'footer' => NULL,
+      ],
+      'path' => $module_path . '/templates',
+    ],
+    'printable_header' => [
+      'template' => 'printable-header',
+      'pattern' => 'printable_header__',
+      'variables' => [
+        'logo_url' => NULL,
+      ],
+      'path' => $module_path . '/templates',
+    ],
+    'printable_footer' => [
+      'template' => 'printable-footer',
+      'pattern' => 'printable_footer__',
+      'variables' => [
+        'footer_content' => NULL,
+      ],
+      'path' => $module_path . '/templates',
+    ],
+  ];
+}
+
+/**
+ * Preprocess variables for list of printable printer friendly page.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - elements: Array of participant names.
+ *     Array keys: #base_url, #title, #html_attributes, #send_script,
+ *     #include_css.
+ */
+function template_preprocess_printable(array &$variables) {
+  global $base_url;
+
+  $config = \Drupal::config('printable.settings');
+  $variables['base_url'] = $base_url . '/' . drupal_get_path('module', 'printable');
+
+  $request = \Drupal::request();
+  $title = '';
+  if ($route = $request->attributes->get(RouteObjectInterface::ROUTE_OBJECT)) {
+    $title = \Drupal::service('title_resolver')->getTitle($request, $route);
+  }
+  $variables['title'] = $title;
+  $language_interface = \Drupal::languageManager()->getCurrentLanguage();
+  $variables['html_attributes'] = new Attribute([
+    'lang' => $language_interface->getId(),
+    'dir' => $language_interface->getDirection(),
+  ]);
+
+  if ($config->get('send_to_printer')) {
+    $variables['send_script'] = $variables['base_url'] . '/js/script.js';
+    if ($config->get('close_window')) {
+      $variables['close_script'] = $variables['base_url'] . '/js/close.js';
+    }
+  }
+
+  if ($include_path = \Drupal::service('printable.css_include')->getCssIncludePath()) {
+    $variables['include_css'] = $include_path;
+  }
+
+}
+
+/**
+ * Preprocess variables for list of printable printer friendly page.
+ *
+ * @param array $variables
+ *   An associative array containing
+ *   - elements: Array of participant names.
+ *     Array keys: #source_url, #footer_links, #footer_content.
+ */
+function template_preprocess_printable_footer(array &$variables) {
+  global $base_url;
+  // Create source url over here.
+  $source_url = \Drupal::service('path.current')->getPath();
+  $pos = strpos($source_url, "printable");
+  $source_url = substr($source_url, 0, $pos - 1);
+  $source_url = $base_url . \Drupal::service('path_alias.manager')->getAliasByPath($source_url);
+  $variables['source_url'] = $source_url;
+  if (\Drupal::service('config.factory')->get('printable.settings')->get('list_attribute')) {
+    $links = $variables['footer_content'];
+    $split_links = explode(',', $links);
+    $new_array = array_unique($split_links);
+    $variables['footer_links'] = $new_array;
+  }
+}
+
+/**
+ * Implements hook_entity_view_mode_alter().
+ */
+function printable_entity_view_mode_info_alter(&$view_modes) {
+  $printable_manager = \Drupal::service('printable.entity_manager');
+  foreach ($printable_manager->getPrintableEntities() as $entity_type => $entity_definition) {
+    // Add an additional view mode to this entity.
+    $view_modes[$entity_type]['printable'] = [
+      'id' => $entity_type . '.printable',
+      'targetEntityType' => $entity_type,
+      'label' => t('Printable'),
+      'custom_settings' => FALSE,
+      'cache' => TRUE,
+    ];
+  }
+}
+
+/**
+ * Implements hook_entity_view().
+ */
+function printable_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+
+  $config = \Drupal::config('printable.settings');
+  $renderer = \Drupal::service('renderer');
+  $renderer->addCacheableDependency($build, $config);
+  $printable_manager = \Drupal::service('printable.entity_manager');
+  $link_builder = \Drupal::service('printable.link_builder');
+  if ($printable_manager->isPrintableEntity($entity) && !empty($entity->id())) {
+    $print_setting = $config->get('printable_print_link_locations');
+    $pdf_setting = $config->get('printable_pdf_link_locations');
+    // Get the name of entity over here.
+    $entity_name = $printable_manager->getEntityName($entity);
+    $printable_navigation = [
+      '#theme' => 'links__entity__printable',
+      '#links' => $link_builder->buildLinks($entity),
+      '#attributes' => [
+        'class' => ['pre_links'],
+      ],
+    ];
+    if (!in_array($entity_name, $print_setting)) {
+      unset($printable_navigation['#links']['print']);
+    }
+
+    $pdf_library = (string) $config->get('pdf_tool');
+    if (!$pdf_library || !in_array($entity_name, $pdf_setting)) {
+      unset($printable_navigation['#links']['pdf']);
+    }
+
+    // Add the build links to the entity being rendered.
+    $build['printable_navigation'] = [
+      '#markup' => '<div class="node_view">' . $renderer->render($printable_navigation) . '</div>',
+      '#attached' => [
+        'library' => ['printable/entity-links'],
+      ],
+      '#weight' => 100,
+      '#cache' => [
+        'tags' => $entity->getEntityType()->getListCacheTags(),
+      ],
+    ];
+  }
+}
+
+/**
+ * Are we in the process of generating a printable version of content?
+ *
+ * @return bool
+ *   Whether we are preparing a printable version of content.
+ */
+function printable_preparing_content() {
+  $match = \Drupal::routeMatch();
+  $route = $match->getRouteObject();
+  return (
+    $route && ($route->getPath() == '/node/{entity}/printable/{printable_format}')
+  );
+}
+
+/**
+ * Are we in the process of generating a PDF?
+ *
+ * @return bool
+ *   Whether we are preparing a PDF.
+ */
+function printable_preparing_pdf() {
+  $match = \Drupal::routeMatch();
+  $routename = $match->getMasterRouteMatch()->getRouteName();
+  return (
+    $routename &&
+    (substr($routename, 0, 21) == 'printable.show_format') &&
+    ($match->getParameter('printable_format') == 'pdf')
+  );
+}
+
+/**
+ * Make file urls absolute if we're generating a PDF.
+ *
+ * @param string $uri
+ *   URI to be altered.
+ */
+function printable_file_url_alter(&$uri) {
+  if (printable_preparing_pdf()) {
+    $service = \Drupal::service('stream_wrapper_manager');
+    $scheme = $service->getScheme($uri);
+
+    if ($service->isValidScheme($scheme)) {
+      $path = \Drupal::service('file_system')->realpath($scheme . '://');
+      $uri = ($path ? $path . '/' : '') . substr($uri, strlen($scheme) + 3);
+    }
+    else {
+      $base_url = \Drupal::request()->getSchemeAndHttpHost();
+
+      if (substr($uri, 0, strlen($base_url)) == $base_url) {
+        $uri = substr($uri, strlen($base_url) + 1);
+      }
+
+      $uri = DRUPAL_ROOT . '/' . $uri;
+    }
+
+    $uri = 'printable://' . $uri;
+  }
+}
+
+/**
+ * Make Link URLs absolute if we're generating a PDF.
+ *
+ * @param array $link
+ *   The link to be altered.
+ */
+function printable_link_alter(array &$link) {
+  if (printable_preparing_pdf()) {
+    $link['options']['absolute'] = TRUE;
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_alter().
+ */
+function printable_theme_suggestions_alter(array &$suggestions, array $variables, $hook) {
+
+  if (!printable_preparing_content()) {
+    return;
+  }
+
+  $additions = [];
+
+  for ($i = 0; $i < count($suggestions); $i++) {
+    $additions[$i] = 'printable__' . $suggestions[$i];
+  }
+
+  // Prioritise the printable suggestions over normal ones.
+  $suggestions = array_merge($suggestions, $additions);
+}

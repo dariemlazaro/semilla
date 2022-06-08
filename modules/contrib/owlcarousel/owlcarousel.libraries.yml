@@ -1,0 +1,19 @@
+owlcarousel:
+  remote: https://github.com/OwlCarousel2/OwlCarousel2
+  version: VERSION
+  license:
+    name: MIT
+    gpl-compatible: false
+  css:
+    theme:
+      /libraries/owlcarousel2/dist/assets/owl.carousel.css: {}
+      /libraries/owlcarousel2/dist/assets/owl.theme.default.css: {}
+      lib/owl-carousel/owl.transitions.css: {}
+  js:
+    /libraries/owlcarousel2/dist/owl.carousel.js: {}
+    js/owlcarousel.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+    - core/jquery.once

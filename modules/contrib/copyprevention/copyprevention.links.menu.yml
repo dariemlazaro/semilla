@@ -1,0 +1,5 @@
+copyprevention.settings_form:
+  route_name: copyprevention.settings_form
+  title: 'Copy Prevention'
+  description: 'Configure Copy Prevention settings.'
+  parent: system.admin_config_ui

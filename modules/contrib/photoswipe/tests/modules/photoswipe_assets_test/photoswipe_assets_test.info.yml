@@ -1,0 +1,11 @@
+name: 'Photoswipe assets test'
+description: 'The module provides ability to test photoswipe assets manager.'
+type: module
+package: Testing
+# version: VERSION
+core_version_requirement: ^9.3
+
+# Information added by Drupal.org packaging script on 2022-03-21
+version: '3.1.0'
+project: 'photoswipe'
+datestamp: 1647857024

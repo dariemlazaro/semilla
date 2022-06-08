@@ -1,0 +1,15 @@
+name: Masonry Search
+type: module
+description: "Displays search results in a Masonry layout."
+core: 8.x
+core_version_requirement: ^8 || ^9
+package: Masonry
+configure: entity.search_page.collection
+dependencies:
+  - masonry:masonry
+  - drupal:search
+
+# Information added by Drupal.org packaging script on 2020-07-12
+version: '8.x-1.0'
+project: 'masonry_search'
+datestamp: 1594543216

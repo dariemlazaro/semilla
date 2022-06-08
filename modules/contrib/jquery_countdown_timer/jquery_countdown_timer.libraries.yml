@@ -1,0 +1,13 @@
+countdown.timer:
+  version: VERSION
+  css:
+    component:
+      css/jquery_countdown_timer.css: {}
+  js:
+    js/jquery_countdown_timer.js: {}
+    js/jquery_countdown_timer_init.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+    - core/jquery.once

@@ -1,0 +1,7 @@
+copyprevention.settings_form:
+  path: /admin/config/user-interface/copyprevention
+  defaults:
+    _title: 'Copy Prevention'
+    _form: \Drupal\copyprevention\Form\CopypreventionSettingsForm
+  requirements:
+    _permission: 'administer copy prevention'

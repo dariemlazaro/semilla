@@ -1,0 +1,10 @@
+field.field_settings.yearonly:
+  type: mapping
+  label: 'Yearonly Settings'
+  mapping:
+    yearonly_from:
+      type: list_integer
+      label: 'Yearonly Start year'
+    yearonly_to:
+      type: list_integer
+      label: 'Yearonly last year'

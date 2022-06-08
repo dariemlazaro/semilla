@@ -1,0 +1,12 @@
+{
+  "name": "drupal/high_contrast",
+  "description": "Allows users to switch to a high contrast version of the active theme.",
+  "type": "drupal-module",
+  "homepage": "https://drupal.org/project/high_contrast",
+  "support": {
+    "issues": "https://drupal.org/project/issues/high_contrast",
+    "source": "https://git.drupalcode.org/project/high_contrast"
+  },
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev"
+}

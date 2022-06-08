@@ -1,0 +1,11 @@
+debug: false
+theme: ''
+html_with_plain: false
+use_mail_mime: false
+postfilter: '0'
+test:
+  to: 'user@example.com'
+  subject: 'subject test'
+  body:
+    value: 'body test'
+  class: 'test'

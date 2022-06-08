@@ -1,0 +1,2 @@
+field.formatter.settings.animated_gif_image_url:
+  type: field.formatter.settings.image_url

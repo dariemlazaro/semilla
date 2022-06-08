@@ -1,0 +1,95 @@
+<?php
+/**
+ * @file
+ * Displays search results in a Masonry layout.
+ */
+use Drupal\contact\ContactFormInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
+use Drupal\search\Entity\SearchPage;
+
+/**
+ * Implements hook_form_FORM_ID_alter() for search_admin_settings.
+ */
+function masonry_search_form_search_page_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+
+  // Get masonry service.
+  $masonry_service = \Drupal::service('masonry.service');
+
+  // Get the Search Page entity.
+  $searchPageEntity = $form_state->getFormObject()->getEntity();
+
+  // Load masonry default configurations.
+  $masonry_default_values = $searchPageEntity->getThirdPartySetting('masonry_search', 'masonry');
+
+  // Add Masonry options to search settings form.
+  $masonry_form = array(
+    '#type' => 'details',
+    '#title' => t('Masonry'),
+    '#tree' => TRUE,
+  );
+
+  $masonry_form['masonry_enabled'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable Masonry'),
+    '#description' => t("Display search results in a Masonry layout."),
+    '#default_value' => !empty($masonry_default_values) ? $masonry_default_values['masonry_enabled'] : FALSE,
+  );
+
+  // If masonry module is properly installed, add it's configurations.
+  if ($masonry_service->isMasonryInstalled()) {
+
+    // Load the masonry form associated with this page.
+    $masonry_form['masonry_settings'] = $masonry_service->buildSettingsForm($masonry_default_values['masonry_settings']);
+
+    // Only show options when Masonry is enabled.
+    foreach ($masonry_service->getMasonryDefaultOptions() as $option => $value) {
+      $masonry_form['masonry_settings'][$option]['#states']['visible']['input.form-checkbox[name*="masonry_search[masonry_enabled]"]'] = array('checked' => TRUE);
+    }
+  }
+  else {
+    // Disable Masonry as plugin is not installed.
+    $masonry_form['masonry']['#disabled'] = TRUE;
+    $masonry_form['masonry']['#description'] = t("This option has been disabled as the jQuery Masonry plugin is not installed.");
+  }
+
+  // Add masonry form options.
+  $form['third_party_settings']['masonry_search'] = $masonry_form;
+  $form['#entity_builders'][] = 'masonry_search_page_builder';
+}
+
+/**
+ * Entity builder for the search page edit form with third party options.
+ */
+function masonry_search_page_builder($entity_type, SearchPage $search_page, &$form, FormStateInterface $form_state) {
+  $search_page->setThirdPartySetting('masonry_search', 'masonry', $form_state->getValue('masonry_search'));
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for theme_item_list__search_results().
+ */
+function masonry_search_preprocess_item_list__search_results(&$variables) {
+
+  // Retrieve search page plugin.
+  $plugin = $variables['context']['plugin'];
+
+  // Get the entity associated with that configuration.
+  $search_page = \Drupal::entityTypeManager()->getStorage('search_page')->load($plugin);
+
+  // Retrieve the masonry third party configurations associated.
+  $masonry_settings = $search_page->getThirdPartySetting('masonry_search', 'masonry');
+
+  // If masonry display is activated, apply it.
+  if (!empty($masonry_settings) && $masonry_settings['masonry_enabled']) {
+    $container = '.search-results';
+
+    foreach ($variables['items'] as &$item) {
+      $item['attributes']->addClass('masonry-item');
+    }
+    $item_selector = 'li.masonry-item';
+
+    // Apply the masonry display on this page.
+    \Drupal::service('masonry.service')->applyMasonryDisplay($variables, $container, $item_selector, $masonry_settings['masonry_settings']);
+  }
+}
+

@@ -1,0 +1,7 @@
+searchindex_wipe.reindex_confirm:
+  path: '/admin/config/search/pages/searchindex_wipe'
+  defaults:
+    _form: '\Drupal\searchindex_wipe\Form\SearchIndexWipeConfirm'
+    _title: 'Clear Index'
+  requirements:
+    _permission: 'wipe search index'

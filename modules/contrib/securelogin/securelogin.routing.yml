@@ -1,0 +1,7 @@
+securelogin.admin:
+  path: '/admin/config/people/securelogin'
+  defaults:
+    _form: 'Drupal\securelogin\Form\SecureLoginConfigForm'
+    _title: 'Secure login'
+  requirements:
+    _permission: 'administer site configuration'

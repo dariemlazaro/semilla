@@ -1,0 +1,6 @@
+copyprevention_images_min_dimension: 150
+copyprevention_images_min_dimention: 150
+copyprevention_images_search:
+  httpheader: 0
+  pagehead: 0
+  robotstxt: 0

@@ -1,0 +1,18 @@
+services:
+  cache_context.high_contrast:
+    class: Drupal\high_contrast\Cache\Context\HighContrastCacheContext
+    arguments: ['@request_stack']
+    tags:
+      - { name: cache.context }
+
+  high_contrast.overrider:
+    class: \Drupal\high_contrast\HighContrastConfigOverride
+    arguments: ['@config.factory', '@file_system']
+    tags:
+      - { name: config.factory.override }
+
+  high_contrast.event_susbscriber:
+    class: \Drupal\high_contrast\EventSubscriber\ConfigEventSubscriber
+    arguments: ['@file_system', '@config.factory']
+    tags:
+      - { name: 'event_subscriber' }

@@ -1,0 +1,111 @@
+<?php
+
+/**
+ * @file
+ * Contains hook implementations for animated_gif module.
+ */
+
+declare(strict_types = 1);
+
+use Drupal\animated_gif\AnimatedGifUtility;
+use Drupal\file\Entity\File;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements template_preprocess_image_formatter().
+ */
+function animated_gif_preprocess_image_formatter(array &$variables) : void {
+  $image = $variables['item'];
+  $imageValues = $image->getValue();
+  $file = File::load($imageValues['target_id']);
+
+  if ($file && $file->getMimeType() === 'image/gif' && AnimatedGifUtility::isAnAnimatedGif($file->getFileUri())) {
+    $variables['image']['#theme'] = 'image';
+    unset($variables['image']['#style_name']);
+    unset($variables['image_style']);
+  }
+}
+
+/**
+ * Implements template_preprocess_responsive_image_formatter().
+ */
+function animated_gif_preprocess_responsive_image_formatter(array &$variables) : void {
+  $image = $variables['item'];
+  $imageValues = $image->getValue();
+  $file = File::load($imageValues['target_id']);
+
+  if ($file && $file->getMimeType() === 'image/gif' && AnimatedGifUtility::isAnAnimatedGif($file->getFileUri())) {
+    $variables['responsive_image']['#theme'] = 'image';
+    unset($variables['image']['#responsive_image_style_id']);
+    unset($variables['image_style']);
+  }
+}
+
+/**
+ * Implements template_preprocess_image_style().
+ */
+function animated_gif_preprocess_image_style(array &$variables) : void {
+  // File entity ID is not available here so we need to load it by URI.
+  $files = \Drupal::entityTypeManager()
+    ->getStorage('file')
+    ->loadByProperties(['uri' => $variables['uri']]);
+
+  if (empty($files)) {
+    return;
+  }
+
+  /** @var \Drupal\file\FileInterface $file */
+  $file = reset($files);
+
+  if ($file->getMimeType() === 'image/gif' && AnimatedGifUtility::isAnAnimatedGif($file->getFileUri())) {
+    $variables['image']['#uri'] = $variables['uri'];
+    unset($variables['image']['#style_name']);
+    unset($variables['image_style']);
+    unset($variables['style_name']);
+  }
+}
+
+/**
+ * Implements template_preprocess_responsive_image().
+ */
+function animated_gif_preprocess_responsive_image(array &$variables) : void {
+  // File entity ID is not available here so we need to load it by URI.
+  $files = \Drupal::entityTypeManager()
+    ->getStorage('file')
+    ->loadByProperties(['uri' => $variables['uri']]);
+
+  if (empty($files)) {
+    return;
+  }
+
+  /** @var \Drupal\file\FileInterface $file */
+  $file = reset($files);
+
+  if ($file->getMimeType() === 'image/gif' && AnimatedGifUtility::isAnAnimatedGif($file->getFileUri())) {
+    unset($variables['img_element']['#attributes']['srcset']);
+    $variables['img_element']['#uri'] = $variables['uri'];
+  }
+}
+
+/**
+ * Implements hook_field_widget_WIDGET_TYPE_form_alter().
+ */
+function animated_gif_field_widget_image_image_form_alter(array &$element, FormStateInterface $form_state, array $context) : void {
+  if (!empty($element['#default_value']['fids'])) {
+    $fid = reset($element['#default_value']['fids']);
+    $file = File::load($fid);
+
+    if ($file && $file->getMimeType() === 'image/gif' && AnimatedGifUtility::isAnAnimatedGif($file->getFileUri())) {
+      $element[] = [
+        '#type' => 'container',
+        '#markup' => t('GIF images are not being processed by image styles, use with caution!'),
+        '#attributes' => [
+          'class' => [
+            'messages',
+            'messages--warning',
+          ],
+        ],
+      ];
+    }
+  }
+}

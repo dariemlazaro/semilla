@@ -1,0 +1,6 @@
+file_upload_secure_validator.file-upload-secure-validator-settings:
+  title: 'File Upload Secure Validator'
+  route_name: file_upload_secure_validator.file-upload-secure-validator-settings
+  description: 'Manage the list of MIME types equivalence groups.'
+  parent: system.admin_config_media
+  weight: 99

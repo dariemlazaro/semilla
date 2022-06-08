@@ -1,0 +1,122 @@
+<?php
+
+/**
+ * @file
+ * Allows users to switch to a high contrast version of the active theme.
+ */
+
+use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\high_contrast\HighContrastTrait;
+
+/**
+ * Location of the high_contrast.css folder.
+ */
+const HIGH_CONTRAST_CSS_FOLDER = 'public://css/';
+
+/**
+ * Location of the high_contrast.css file.
+ */
+const HIGH_CONTRAST_CSS_LOCATION = 'public://css/high_contrast.css';
+
+/**
+ * Implements hook_library_info_build().
+ */
+function high_contrast_library_info_build() {
+  $libraries = [];
+
+  $libraries['high_contrast'] = [
+    'version' => filemtime(HIGH_CONTRAST_CSS_LOCATION),
+    'css' => [
+      'base' => [
+        HIGH_CONTRAST_CSS_LOCATION => [],
+      ],
+    ],
+  ];
+
+  return $libraries;
+}
+
+/**
+ * Implements hook_page_attachments().
+ *
+ * Attach the library to the page instead of attaching it to the form, so the
+ * high contrast persists even on pages where the HighContrastSwitchForm is not
+ * being displayed.
+ */
+function high_contrast_page_attachments(array &$attachments) {
+  $attachments['#cache']['contexts'][] = 'high_contrast';
+  $attachments['#cache']['tags'][] = 'config:high_contrast.settings';
+
+  if (HighContrastTrait::highContrastEnabled()) {
+    $attachments['#attached']['library'][] = 'high_contrast/high_contrast';
+  }
+}
+
+/**
+ * Implements hook_block_view_alter().
+ */
+function high_contrast_block_view_alter(array &$build, BlockPluginInterface $block) {
+  $build['#pre_render'][] = '\Drupal\high_contrast\HighContrastBlockView::preRender';
+}
+
+/**
+ * Function for building a custom high contrast stylesheet.
+ *
+ * @param string $background
+ *   The hex color value to use as background.
+ * @param string $text
+ *   The hex color value to use for texts.
+ * @param string $hyperlink
+ *   The hex color value to use for hyperlinks.
+ *
+ * @return string
+ *   The compiled CSS.
+ */
+function _high_contrast_build_css($background, $text, $hyperlink) {
+  $css = '
+* {
+  background-color: ' . $background . ' !important;
+  background-image: none !important;
+  color: ' . $text . ' !important;
+  line-height: 1.5em !important;
+  text-shadow: none !important;
+}
+
+a, a * {
+  background-color: ' . $background . ' !important;
+  color: ' . $hyperlink . ' !important;
+  text-decoration: underline !important;
+}
+
+a:hover, a:hover * {
+  background-color: ' . $hyperlink . ' !important;
+  color: ' . $background . ' !important;
+  text-decoration: none !important;
+}
+
+input {
+  background-color: ' . $text . ' !important;
+  color: ' . $background . ' !important;
+}
+
+input[type=submit],
+input[type=button],
+button {
+  background-color: ' . $hyperlink . ' !important;
+  color: ' . $background . ' !important;
+}
+
+input[type=submit]:hover,
+input[type=button]:hover,
+button:hover {
+  text-decoration: underline !important;
+}
+
+::selection {
+  background-color: cyan !important;
+  color: ' . $background . ' !important;
+}
+';
+
+  return $css;
+}

@@ -1,0 +1,14 @@
+name: HTML Mail
+type: module
+description: 'Enables HTML in system emails.'
+package: Mail
+core_version_requirement: ^8.8.2 || ^9
+dependencies:
+  - mailsystem:mailsystem
+
+configure: htmlmail.settings
+
+# Information added by Drupal.org packaging script on 2021-02-19
+version: '8.x-3.0-alpha3'
+project: 'htmlmail'
+datestamp: 1613730657

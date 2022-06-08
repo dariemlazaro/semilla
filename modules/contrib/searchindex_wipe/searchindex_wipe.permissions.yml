@@ -1,0 +1,4 @@
+wipe search index':
+  title: 'Wipe Search Index'
+  description: 'Permission to wipe search index.'
+  restrict access: true

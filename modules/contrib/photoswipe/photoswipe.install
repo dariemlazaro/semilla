@@ -1,0 +1,75 @@
+<?php
+
+/**
+ * @file
+ * Install, uninstall and update hooks for Photswipe module.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function photoswipe_requirements($phase) {
+
+  $requirements = [];
+
+  if ($phase == 'runtime') {
+    $library_definition = \Drupal::service('library.discovery')->getLibraryByName('photoswipe', 'photoswipe');
+    $assets_manager = \Drupal::service('photoswipe.assets_manager');
+    $library = [];
+    if (!file_exists(DRUPAL_ROOT . '/' . $library_definition['css'][0]['data'])) {
+      $error_type = t('Missing Photoswipe library');
+      $error_message = t('Library not found in the "libraries" directory.');
+      if (empty($library['installed'])) {
+        $requirements['photoswipe_plugin'] = [
+          'title' => t('Photoswipe plugin'),
+          'value' => t('@e: At least @a', [
+            '@e' => $error_type,
+            '@a' => $assets_manager->photoswipeMinPluginVersion,
+          ]),
+          'severity' => REQUIREMENT_ERROR,
+          'description' => t('@error You need to download the <a href=":url">Photoswipe plugin</a>, extract the archive and place the photoswipe directory in the %path directory on your server. Keep package.json file inside directory to be able to check version of the library using Drupal tools.', [
+            '@error' => $error_message,
+            ':url' => $library_definition['remote'],
+            '%path' => 'libraries',
+          ]),
+        ];
+      }
+    }
+    else {
+      $library['installed'] = TRUE;
+      $package_json_content = file_get_contents(DRUPAL_ROOT . '/libraries/photoswipe/package.json');
+      $package_json = json_decode($package_json_content);
+      $library['version'] = $package_json->version;
+      if (version_compare($library['version'], $assets_manager->photoswipeMinPluginVersion, '>=')) {
+        $requirements['photoswipe_plugin'] = [
+          'title' => t('Photoswipe plugin'),
+          'severity' => REQUIREMENT_OK,
+          'value' => $library['version'],
+        ];
+      }
+      else {
+        $requirements['photoswipe_plugin'] = [
+          'title' => t('Photoswipe plugin'),
+          'value' => t('At least @a', ['@a' => $assets_manager->photoswipeMinPluginVersion]),
+          'severity' => REQUIREMENT_ERROR,
+          'description' => t('You need to download a later version of the <a href=":url">Photoswipe plugin</a> and replace the old version located in the %path directory on your server. Keep package.json file inside directory to be able to check version of the library using Drupal tools.', [
+            ':url' => $library_definition['remote'],
+            '%path' => '/libraries/photoswipe',
+          ]),
+        ];
+      }
+    }
+  }
+
+  return $requirements;
+}
+
+/**
+ * Trigger cache clear.
+ *
+ * Empty update function to trigger cache clear after changing field formatter
+ * settings.
+ */
+function photoswipe_update_7001() {
+  // Do nothing.
+}

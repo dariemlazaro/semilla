@@ -1,0 +1,9 @@
+bypass copy prevention:
+  title: 'Bypass Copy prevention'
+  description: 'Bypass copy prevention methods.'
+  restrict access: TRUE
+
+administer copy prevention:
+  title: 'Administer Copy prevention'
+  description: 'Administer copy prevention settings.'
+  restrict access: TRUE

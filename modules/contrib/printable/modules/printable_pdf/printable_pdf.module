@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * @file
+ * Provides a printable format for generating PDFs.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function printable_pdf_theme() {
+  $module_path = drupal_get_path('module', 'printable_pdf');
+  return [
+    'printable_pdf_footer' => [
+      'template' => 'printable-footer',
+      'pattern' => 'printable_footer__',
+      'variables' => [],
+      'path' => $module_path . '/templates',
+    ],
+    'printable_pdf_header' => [
+      'template' => 'printable-header',
+      'pattern' => 'printable_header__',
+      'variables' => [],
+      'path' => $module_path . '/templates',
+    ],
+  ];
+}

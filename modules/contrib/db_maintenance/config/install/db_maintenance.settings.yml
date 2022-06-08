@@ -1,0 +1,7 @@
+cron_last_run: 0
+cron_frequency: 86400
+use_time_interval: false
+time_interval_start: '01:30'
+time_interval_end: '02:30'
+all_tables: 0
+write_log: 0

@@ -1,0 +1,34 @@
+photoswipe:
+  remote: https://github.com/dimsemenov/PhotoSwipe/archive/v4.1.0.zip
+  license:
+    name: MIT
+    gpl-compatible: false
+  css:
+    component:
+      /libraries/photoswipe/dist/photoswipe.css: {}
+      /libraries/photoswipe/dist/default-skin/default-skin.css: {}
+  js:
+    /libraries/photoswipe/dist/photoswipe.min.js: { minified: true }
+    /libraries/photoswipe/dist/photoswipe-ui-default.min.js: { minified: true }
+
+# Development Version
+photoswipe.dev:
+  remote: https://github.com/dimsemenov/PhotoSwipe/archive/v4.1.0.zip
+  license:
+    name: MIT
+    gpl-compatible: false
+  css:
+    component:
+      /libraries/photoswipe/dist/photoswipe.css: {}
+      /libraries/photoswipe/dist/default-skin/default-skin.css: {}
+  js:
+    /libraries/photoswipe/dist/photoswipe.js: {}
+    /libraries/photoswipe/dist/photoswipe-ui-default.js: {}
+
+photoswipe.init:
+  js:
+    js/photoswipe.jquery.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal

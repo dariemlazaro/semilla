@@ -1,0 +1,4 @@
+services:
+  photoswipe.assets_manager:
+    class: Drupal\photoswipe\PhotoswipeAssetsManager
+    arguments: ['@config.factory', '@renderer', '@module_handler', '@theme.manager']

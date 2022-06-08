@@ -1,0 +1,30 @@
+# In order to to create pages it is necessary to define routes for them. A route
+# maps a URL path to a controller. It defines with what function or method will
+# be called when a URL is accessed.
+
+### Admin Overview
+# Overview page returns a menu-block with links that where
+# rules.ui.overview is declared as parent.
+db_maintenance.overview:
+  path: '/admin/config/system/db_maintenance'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'DB Maintenance'
+  requirements:
+    _permission: 'administer db maintenance'
+
+db_maintenance.optimize_tables_page:
+  path: '/db_maintenance'
+  defaults:
+    _controller: '\Drupal\db_maintenance\Controller\DefaultController::optimizeTables'
+  requirements:
+    _permission: 'administer db maintenance'
+    _csrf_token: 'TRUE'
+db_maintenance.admin_settings:
+  path: '/admin/config/system/db_maintenance'
+  defaults:
+    _title: 'DB Maintenance'
+    _form: '\Drupal\db_maintenance\Form\DbMaintenanceAdminSettings'
+  requirements:
+    _permission: 'administer db maintenance'
+

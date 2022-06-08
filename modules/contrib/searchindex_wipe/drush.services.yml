@@ -1,0 +1,5 @@
+services:
+  searchindex_wipe.commands:
+    class: \Drupal\searchindex_wipe\Commands\SearchIndexWipeCommands
+    tags:
+      - { name: drush.command }

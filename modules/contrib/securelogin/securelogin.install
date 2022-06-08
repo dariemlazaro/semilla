@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update functions for Secure login module.
+ */
+
+use Drupal\Core\Cache\Cache;
+
+/**
+ * Implements hook_install().
+ */
+function securelogin_install() {
+  // Invalidate all cached HTML output.
+  Cache::invalidateTags(['rendered']);
+}

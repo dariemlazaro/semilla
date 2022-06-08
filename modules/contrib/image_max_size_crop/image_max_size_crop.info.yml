@@ -1,0 +1,12 @@
+name: 'Image maximum size crop'
+description: 'Crop image when larger than specified dimension(s).'
+package: Media
+core_version_requirement: ^8.8 || ^9
+dependencies:
+  - drupal:image
+type: module
+
+# Information added by Drupal.org packaging script on 2022-01-17
+version: '2.0.0'
+project: 'image_max_size_crop'
+datestamp: 1642421890

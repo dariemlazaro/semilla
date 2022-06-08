@@ -1,0 +1,13 @@
+name: High Contrast
+type: module
+description: 'Allows users to switch to a high contrast version of the active theme.'
+package: User interface
+core_version_requirement: ^8.8 || ^9
+configure: high_contrast.config_form
+dependencies:
+  - drupal:file
+
+# Information added by Drupal.org packaging script on 2020-04-06
+version: '8.x-1.0-beta4'
+project: 'high_contrast'
+datestamp: 1586196717

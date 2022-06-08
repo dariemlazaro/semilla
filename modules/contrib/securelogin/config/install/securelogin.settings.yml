@@ -1,0 +1,9 @@
+base_url: NULL
+secure_forms: TRUE
+all_forms: FALSE
+other_forms: ''
+form_user_login_form: TRUE
+form_user_form: TRUE
+form_user_register_form: TRUE
+form_user_pass_reset: TRUE
+form_user_pass: TRUE
